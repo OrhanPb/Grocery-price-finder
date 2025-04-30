@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Grocery Price Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .cheapest {
+            background-color: #d4edda;
+        }
+        .loading {
+            display: none;
+        }
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .error-message {
+            display: none;
+            margin-top: 1rem;
+        }
+        .favorite-btn {
+            cursor: pointer;
+            color: #dc3545;
+        }
+        .favorite-btn.active {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Grocery Price Finder</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" id="authButtons">
+                        <button class="btn btn-outline-light me-2" onclick="showLoginForm()">Login</button>
+                        <button class="btn btn-light" onclick="showRegisterForm()">Register</button>
+                    </li>
+                    <li class="nav-item d-none" id="userMenu">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <span id="username">User</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" onclick="showFavorites()">My Favorites</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Auth Forms -->
+        <div id="loginForm" class="auth-container d-none">
+            <h3 class="text-center mb-4">Login</h3>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="loginUsername" placeholder="Username" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <div class="error-message alert alert-danger" id="loginError"></div>
+        </div>
+
+        <div id="registerForm" class="auth-container d-none">
+            <h3 class="text-center mb-4">Register</h3>
+            <form onsubmit="handleRegister(event)">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="registerUsername" placeholder="Username" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="registerEmail" placeholder="Email" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="registerPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+            <div class="error-message alert alert-danger" id="registerError"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <h1 class="text-center mb-4">Local Grocery Price Finder</h1>
+            
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search for items...">
+                        <button class="btn btn-primary" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <select id="storeFilter" class="form-select">
+                        <option value="">All Stores</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <select id="locationFilter" class="form-select">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <select id="sortOrder" class="form-select">
+                        <option value="asc">Price: Low to High</option>
+                        <option value="desc">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="loading text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Store</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center" id="pagination">
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let allItems = [];
+        let authToken = localStorage.getItem('authToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+
+        // Auth Functions
+        function showLoginForm() {
+            document.getElementById('loginForm').classList.remove('d-none');
+            document.getElementById('registerForm').classList.add('d-none');
+            document.getElementById('mainContent').classList.add('d-none');
+        }
+
+        function showRegisterForm() {
+            document.getElementById('registerForm').classList.remove('d-none');
+            document.getElementById('loginForm').classList.add('d-none');
+            document.getElementById('mainContent').classList.add('d-none');
+        }
+
+        function showMainContent() {
+            document.getElementById('loginForm').classList.add('d-none');
+            document.getElementById('registerForm').classList.add('d-none');
+            document.getElementById('mainContent').classList.remove('d-none');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.access);
+                    localStorage.setItem('refreshToken', data.refresh);
+                    authToken = data.access;
+                    refreshToken = data.refresh;
+                    updateAuthUI(true);
+                    showMainContent();
+                    fetchItems();
+                } else {
+                    document.getElementById('loginError').textContent = data.detail || 'Login failed';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('loginError').textContent = 'An error occurred during login';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch('/api/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.access);
+                    localStorage.setItem('refreshToken', data.refresh);
+                    authToken = data.access;
+                    refreshToken = data.refresh;
+                    updateAuthUI(true);
+                    showMainContent();
+                    fetchItems();
+                } else {
+                    document.getElementById('registerError').textContent = Object.values(data).join(', ');
+                    document.getElementById('registerError').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                document.getElementById('registerError').textContent = 'An error occurred during registration';
+                document.getElementById('registerError').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            authToken = null;
+            refreshToken = null;
+            updateAuthUI(false);
+            showMainContent();
+            fetchItems();
+        }
+
+        function updateAuthUI(isLoggedIn) {
+            document.getElementById('authButtons').classList.toggle('d-none', isLoggedIn);
+            document.getElementById('userMenu').classList.toggle('d-none', !isLoggedIn);
+        }
+
+        // API Functions
+        async function fetchWithAuth(url, options = {}) {
+            if (authToken) {
+                options.headers = {
+                    ...options.headers,
+                    'Authorization': `Bearer ${authToken}`,
+                };
+            }
+            return fetch(url, options);
+        }
+
+        async function refreshAuthToken() {
+            try {
+                const response = await fetch('/api/auth/refresh/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ refresh: refreshToken }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('authToken', data.access);
+                    authToken = data.access;
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Token refresh error:', error);
+                return false;
+            }
+        }
+
+        async function fetchItems(page = 1) {
+            try {
+                const loading = document.querySelector('.loading');
+                loading.style.display = 'block';
+
+                const searchTerm = document.getElementById('searchInput').value;
+                const store = document.getElementById('storeFilter').value;
+                const location = document.getElementById('locationFilter').value;
+                const sortOrder = document.getElementById('sortOrder').value;
+
+                let url = `/api/items/?page=${page}`;
+                if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
+                if (store && store !== "All Stores") url += `&store=${encodeURIComponent(store)}`;
+                if (location && location !== "All Locations") url += `&location=${encodeURIComponent(location)}`;
+                url += `&ordering=${sortOrder === 'asc' ? 'price' : '-price'}`;
+
+                const response = await fetchWithAuth(url);
+                if (response.status === 401) {
+                    const refreshed = await refreshAuthToken();
+                    if (refreshed) {
+                        return fetchItems(page);
+                    }
+                }
+
+                const data = await response.json();
+                allItems = data.results;
+                totalPages = Math.ceil(data.count / 10);
+                currentPage = page;
+
+                // Fetch all items for filter options
+                const allItemsResponse = await fetchWithAuth('/api/items/?page=1&page_size=1000');
+                const allItemsData = await allItemsResponse.json();
+                
+                updateFilters(allItemsData.results);
+                displayResults(allItems);
+                updatePagination();
+            } catch (error) {
+                console.error('Error fetching items:', error);
+                showError('Failed to load items. Please try again.');
+            } finally {
+                document.querySelector('.loading').style.display = 'none';
+            }
+        }
+
+        async function toggleFavorite(itemId) {
+            if (!authToken) {
+                showLoginForm();
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth(`/api/items/${itemId}/favorite/`, {
+                    method: 'POST',
+                });
+
+                if (response.status === 401) {
+                    const refreshed = await refreshAuthToken();
+                    if (refreshed) {
+                        return toggleFavorite(itemId);
+                    }
+                }
+
+                if (response.ok) {
+                    fetchItems(currentPage);
+                }
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                showError('Failed to update favorite status.');
+            }
+        }
+
+        async function showFavorites() {
+            if (!authToken) {
+                showLoginForm();
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth('/api/favorites/');
+                if (response.status === 401) {
+                    const refreshed = await refreshAuthToken();
+                    if (refreshed) {
+                        return showFavorites();
+                    }
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    allItems = data;
+                    displayResults(allItems);
+                }
+            } catch (error) {
+                console.error('Error fetching favorites:', error);
+                showError('Failed to load favorites.');
+            }
+        }
+
+        // UI Functions
+        function updateFilters(items) {
+            const stores = new Set(['All Stores']);
+            const locations = new Set(['All Locations']);
+
+            items.forEach(item => {
+                stores.add(item.store);
+                locations.add(item.location);
+            });
+
+            const storeFilter = document.getElementById('storeFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const currentStore = storeFilter.value || 'All Stores';
+            const currentLocation = locationFilter.value || 'All Locations';
+
+            storeFilter.innerHTML = '';
+            locationFilter.innerHTML = '';
+
+            Array.from(stores).sort().forEach(store => {
+                const option = document.createElement('option');
+                option.value = store;
+                option.textContent = store;
+                option.selected = store === currentStore;
+                storeFilter.appendChild(option);
+            });
+
+            Array.from(locations).sort().forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                option.selected = location === currentLocation;
+                locationFilter.appendChild(option);
+            });
+        }
+
+        function displayResults(items) {
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            
+            if (items.length === 0) {
+                resultsTable.innerHTML = '<tr><td colspan="5" class="text-center">No items found</td></tr>';
+                return;
+            }
+
+            const sortOrder = document.getElementById('sortOrder').value;
+            const sortedItems = [...items].sort((a, b) => {
+                return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
+            });
+
+            const cheapestPrice = Math.min(...items.map(item => item.price));
+
+            sortedItems.forEach(item => {
+                const row = document.createElement('tr');
+                if (item.price === cheapestPrice) {
+                    row.classList.add('cheapest');
+                }
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>${item.store}</td>
+                    <td>${item.location}</td>
+                    <td>
+                        <i class="fas fa-heart favorite-btn ${item.is_favorited ? 'active' : ''}"
+                           onclick="toggleFavorite(${item.id})"
+                           title="${item.is_favorited ? 'Remove from favorites' : 'Add to favorites'}">
+                        </i>
+                    </td>
+                `;
+                resultsTable.appendChild(row);
+            });
+        }
+
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            // Previous button
+            pagination.innerHTML += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchItems(${currentPage - 1})">Previous</a>
+                </li>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.innerHTML += `
+                    <li class="page-item ${currentPage === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="fetchItems(${i})">${i}</a>
+                    </li>
+                `;
+            }
+
+            // Next button
+            pagination.innerHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="fetchItems(${currentPage + 1})">Next</a>
+                </li>
+            `;
+        }
+
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.row'));
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const storeFilter = document.getElementById('storeFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const sortOrder = document.getElementById('sortOrder');
+
+            searchButton.addEventListener('click', () => fetchItems(1));
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') fetchItems(1);
+            });
+            
+            storeFilter.addEventListener('change', () => {
+                console.log('Store filter changed:', storeFilter.value);
+                fetchItems(1);
+            });
+            
+            locationFilter.addEventListener('change', () => {
+                console.log('Location filter changed:', locationFilter.value);
+                fetchItems(1);
+            });
+            
+            sortOrder.addEventListener('change', () => {
+                console.log('Sort order changed:', sortOrder.value);
+                fetchItems(1);
+            });
+
+            // Check authentication status
+            if (authToken) {
+                updateAuthUI(true);
+            }
+
+            // Initial data load
+            fetchItems();
+        });
+    </script>
+</body>
+</html> 

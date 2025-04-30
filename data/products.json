@@ -1,0 +1,22 @@
+[
+  {"name": "Milk", "price": 2.99, "store": "Walmart", "location": "Downtown"},
+  {"name": "Milk", "price": 3.29, "store": "Target", "location": "East Side"},
+  {"name": "Milk", "price": 2.79, "store": "Kroger", "location": "West End"},
+  {"name": "Eggs", "price": 1.99, "store": "Walmart", "location": "Downtown"},
+  {"name": "Eggs", "price": 2.29, "store": "Target", "location": "East Side"},
+  {"name": "Eggs", "price": 2.19, "store": "Kroger", "location": "West End"},
+  {"name": "Bread", "price": 2.49, "store": "Walmart", "location": "Downtown"},
+  {"name": "Bread", "price": 2.79, "store": "Target", "location": "East Side"},
+  {"name": "Bread", "price": 2.29, "store": "Kroger", "location": "West End"},
+  {"name": "Apples", "price": 0.99, "store": "Walmart", "location": "Downtown"},
+  {"name": "Apples", "price": 1.29, "store": "Target", "location": "East Side"},
+  {"name": "Apples", "price": 1.19, "store": "Kroger", "location": "West End"},
+  {"name": "Bananas", "price": 0.59, "store": "Walmart", "location": "Downtown"},
+  {"name": "Bananas", "price": 0.69, "store": "Target", "location": "East Side"},
+  {"name": "Bananas", "price": 0.49, "store": "Kroger", "location": "West End"},
+  {"name": "Chicken", "price": 4.99, "store": "Walmart", "location": "Downtown"},
+  {"name": "Chicken", "price": 5.29, "store": "Target", "location": "East Side"},
+  {"name": "Chicken", "price": 4.79, "store": "Kroger", "location": "West End"},
+  {"name": "Rice", "price": 1.99, "store": "Walmart", "location": "Downtown"},
+  {"name": "Rice", "price": 2.29, "store": "Target", "location": "East Side"}
+] 
