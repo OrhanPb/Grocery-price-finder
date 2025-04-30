@@ -10,6 +10,11 @@ from .models import Item
 from .serializers import ItemSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+import json
+import os
+from django.http import JsonResponse
+from django.views.generic import TemplateView
+from django.conf import settings
 
 User = get_user_model()
 
@@ -96,3 +101,40 @@ def cheapest_item(request):
     cheapest_item = items.order_by('price').first()
     serializer = ItemSerializer(cheapest_item)
     return Response(serializer.data)
+
+def load_products():
+    json_path = os.path.join(settings.BASE_DIR, 'data', 'products.json')
+    with open(json_path, 'r') as file:
+        return json.load(file)['products']
+
+def items_list(request):
+    products = load_products()
+    
+    # Filter by store if specified
+    store = request.GET.get('store')
+    if store:
+        products = [p for p in products if p['store'].lower() == store.lower()]
+    
+    # Sort by price
+    sort = request.GET.get('sort')
+    if sort == 'low_to_high':
+        products = sorted(products, key=lambda x: x['price'])
+    elif sort == 'high_to_low':
+        products = sorted(products, key=lambda x: x['price'], reverse=True)
+    
+    return JsonResponse({'products': products})
+
+def cheapest_items(request):
+    products = load_products()
+    
+    # Group by name and find cheapest for each
+    cheapest = {}
+    for product in products:
+        name = product['name']
+        if name not in cheapest or product['price'] < cheapest[name]['price']:
+            cheapest[name] = product
+    
+    return JsonResponse({'products': list(cheapest.values())})
+
+class HomeView(TemplateView):
+    template_name = 'grocery/index.html'
