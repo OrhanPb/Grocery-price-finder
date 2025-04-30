@@ -13,6 +13,27 @@
             "price": 1.99,
             "store": "Target",
             "category": "Bakery"
+        },
+        {
+            "id": 3,
+            "name": "Eggs",
+            "price": 3.49,
+            "store": "Walmart",
+            "category": "Dairy"
+        },
+        {
+            "id": 4,
+            "name": "Apples",
+            "price": 0.99,
+            "store": "Target",
+            "category": "Fruits"
+        },
+        {
+            "id": 5,
+            "name": "Chicken",
+            "price": 5.99,
+            "store": "Walmart",
+            "category": "Meat"
         }
     ]
 } 

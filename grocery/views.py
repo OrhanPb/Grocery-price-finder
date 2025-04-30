@@ -103,19 +103,21 @@ def cheapest_item(request):
     return Response(serializer.data)
 
 def load_products():
+    # Read product data from JSON file
     json_path = os.path.join(settings.BASE_DIR, 'data', 'products.json')
     with open(json_path, 'r') as file:
         return json.load(file)['products']
 
 def items_list(request):
+    # Get all products
     products = load_products()
     
-    # Filter by store if specified
+    # Filter by store if user wants
     store = request.GET.get('store')
     if store:
         products = [p for p in products if p['store'].lower() == store.lower()]
     
-    # Sort by price
+    # Sort by price if user wants
     sort = request.GET.get('sort')
     if sort == 'low_to_high':
         products = sorted(products, key=lambda x: x['price'])
@@ -125,9 +127,10 @@ def items_list(request):
     return JsonResponse({'products': products})
 
 def cheapest_items(request):
+    # Get all products
     products = load_products()
     
-    # Group by name and find cheapest for each
+    # Find cheapest price for each item
     cheapest = {}
     for product in products:
         name = product['name']
@@ -137,4 +140,5 @@ def cheapest_items(request):
     return JsonResponse({'products': list(cheapest.values())})
 
 class HomeView(TemplateView):
+    # Show the main page
     template_name = 'grocery/index.html'

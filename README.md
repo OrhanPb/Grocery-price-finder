@@ -1,77 +1,63 @@
 # Grocery Price Finder
 
-A simple Django application that helps users find and compare grocery prices across different stores. This version uses a JSON file for data storage, making it simple to deploy and maintain.
+A simple web app that helps you find the best prices for groceries in different stores. It uses a simple JSON file to store data, making it easy to use and update.
 
-## Features
+## What You Can Do
 
-- View grocery items and their prices across different stores
-- Filter items by store
-- Sort prices from low to high or high to low
+- See prices of groceries in different stores
+- Filter items by store name
+- Sort prices from lowest to highest or highest to lowest
 - Find the cheapest price for each item
 
-## Technical Stack
+## What We Use
 
-- Python 3.10+
+- Python 3.10 or newer
 - Django 5.0
-- Static JSON data storage
-- HTML/CSS/JavaScript frontend
+- JSON file for storing data
+- HTML/CSS/JavaScript for the website
 
-## Project Structure
+## How to Set Up
 
-```
-grocery_finder/
-├── data/
-│   └── products.json     # Store all product data
-├── grocery/
-│   ├── templates/        # HTML templates
-│   ├── views.py         # API and view logic
-│   └── urls.py          # URL routing
-├── static/              # Static files (CSS, JS)
-└── manage.py
-```
-
-## Setup
-
-1. Clone the repository
-2. Create a virtual environment:
+1. Get the code from GitHub
+2. Make a new Python environment:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
-3. Install dependencies:
+3. Install what you need:
    ```bash
    pip install -r requirements.txt
    ```
-4. Run the development server:
+4. Start the app:
    ```bash
    python manage.py runserver
    ```
 
-## Production Deployment
+## How to Put It Online
 
-For production deployment:
+To put the app online:
 
-1. Set `DEBUG = False` in settings.py
-2. Configure your web server (e.g., Nginx, Apache) to serve static files
-3. Use a WSGI server like Gunicorn:
+1. Change `DEBUG = False` in settings.py
+2. Set up a web server (like Nginx or Apache) for files
+3. Use Gunicorn to run the app:
    ```bash
    pip install gunicorn
    gunicorn grocery_finder.wsgi:application
    ```
 
-## Data Management
+## How to Update Data
 
-All product data is stored in `data/products.json`. To update prices or add new products, simply edit this JSON file.
+All product data is in `data/products.json`. To change prices or add new products, just edit this file.
 
-## API Endpoints
+## How to Use the App
 
-- `GET /api/items/` - List all items (supports store filter and price sorting)
-- `GET /api/cheapest/` - Get the cheapest price for each item
+- `GET /api/items/` - See all items (you can filter by store and sort by price)
+- `GET /api/cheapest/` - Find the cheapest price for each item
 
-## Contributing
+## How to Help
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request 
+1. Make a copy of the project
+2. Make your changes
+3. Save your changes
+4. Send your changes to us
+5. We will check and add your changes 

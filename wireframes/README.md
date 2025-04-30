@@ -1,56 +1,40 @@
-# Local Grocery Price Finder - Wireframes
+# Wireframes for Grocery Price Finder
 
-## Pages
+This folder has the first designs for our grocery price finder app. These designs show how the app will look before we start coding.
 
-### 1. Ana Sayfa (Home)
-- Navbar (Logo, Login/Register butonları)
-- Arama çubuğu
-- Filtre menüsü (Mağaza, Konum)
-- Sıralama seçenekleri
-- Ürün tablosu
-- Sayfalama
+## What's in This Folder
 
-### 2. Giriş/Kayıt Sayfası
-- Giriş formu
-  - Kullanıcı adı
-  - Şifre
-  - Giriş butonu
-- Kayıt formu
-  - Kullanıcı adı
-  - E-posta
-  - Şifre
-  - Kayıt butonu
+- `home.png`: The main page design
+- `search.png`: How the search page will look
+- `results.png`: How search results will show
+- `filters.png`: How to filter items
+- `mobile.png`: How the app looks on phones
 
-### 3. Ürün Detay Sayfası
-- Ürün bilgileri
-  - İsim
-  - Fiyat
-  - Mağaza
-  - Konum
-- Favorilere ekleme butonu
-- Benzer ürünler listesi
+## How to Use These Designs
 
-### 4. Favoriler Sayfası
-- Favori ürünler listesi
-- Filtreleme seçenekleri
-- Sıralama seçenekleri
+1. Look at the designs to understand how the app will work
+2. Use them as a guide when making the app
+3. Check if the final app matches these designs
 
-## Responsive Tasarım
-- Mobil görünüm (320px - 480px)
-- Tablet görünüm (481px - 768px)
-- Masaüstü görünüm (769px ve üzeri)
+## Design Notes
 
-## Kullanıcı Akışı
-1. Ana sayfa
-   - Arama yapma
-   - Filtreleme
-   - Sıralama
-2. Giriş/Kayıt
-   - Hesap oluşturma
-   - Giriş yapma
-3. Ürün detayları
-   - Favorilere ekleme
-   - Benzer ürünleri görüntüleme
-4. Favoriler
-   - Favori ürünleri yönetme
-   - Filtreleme ve sıralama 
+- The app should be easy to use
+- All prices should be easy to read
+- The search box should be easy to find
+- The filters should be simple to use
+- The app should work well on phones and computers
+
+## Colors We Use
+
+- Main color: #007bff (Blue)
+- Text color: #333333 (Dark Gray)
+- Background: #ffffff (White)
+- Error color: #dc3545 (Red)
+- Success color: #28a745 (Green)
+
+## Fonts We Use
+
+- Main text: Arial
+- Headings: Arial Bold
+- Prices: Arial Bold
+- Buttons: Arial 

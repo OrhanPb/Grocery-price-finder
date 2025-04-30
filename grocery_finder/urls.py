@@ -16,8 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
+# Main URLs for our app
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('grocery.urls')),  # Root URL pattern
+    # Main app URLs
+    path('', include('grocery.urls')),
+    
+    # Static files (CSS, JavaScript, Images)
+    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    
+    # Media files (User uploaded files)
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
