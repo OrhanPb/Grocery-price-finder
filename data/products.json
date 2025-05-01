@@ -2,38 +2,195 @@
     "products": [
         {
             "id": 1,
-            "name": "Milk",
-            "price": 2.99,
+            "name": "Whole Milk (1 Gallon)",
+            "price": 3.99,
             "store": "Walmart",
-            "category": "Dairy"
+            "category": "Dairy",
+            "location": "Aisle 7"
         },
         {
             "id": 2,
-            "name": "Bread",
-            "price": 1.99,
+            "name": "Whole Milk (1 Gallon)",
+            "price": 4.29,
             "store": "Target",
-            "category": "Bakery"
+            "category": "Dairy",
+            "location": "Aisle 8"
         },
         {
             "id": 3,
-            "name": "Eggs",
-            "price": 3.49,
-            "store": "Walmart",
-            "category": "Dairy"
+            "name": "Whole Milk (1 Gallon)",
+            "price": 4.19,
+            "store": "Kroger",
+            "category": "Dairy",
+            "location": "Aisle 6"
         },
         {
             "id": 4,
-            "name": "Apples",
-            "price": 0.99,
-            "store": "Target",
-            "category": "Fruits"
+            "name": "White Bread",
+            "price": 2.49,
+            "store": "Walmart",
+            "category": "Bakery",
+            "location": "Aisle 3"
         },
         {
             "id": 5,
-            "name": "Chicken",
+            "name": "White Bread",
+            "price": 2.99,
+            "store": "Target",
+            "category": "Bakery",
+            "location": "Aisle 4"
+        },
+        {
+            "id": 6,
+            "name": "White Bread",
+            "price": 2.79,
+            "store": "Kroger",
+            "category": "Bakery",
+            "location": "Aisle 3"
+        },
+        {
+            "id": 7,
+            "name": "Chicken Breast (1 lb)",
+            "price": 3.99,
+            "store": "Walmart",
+            "category": "Meat",
+            "location": "Aisle 12"
+        },
+        {
+            "id": 8,
+            "name": "Chicken Breast (1 lb)",
+            "price": 4.49,
+            "store": "Target",
+            "category": "Meat",
+            "location": "Aisle 13"
+        },
+        {
+            "id": 9,
+            "name": "Chicken Breast (1 lb)",
+            "price": 4.29,
+            "store": "Kroger",
+            "category": "Meat",
+            "location": "Aisle 11"
+        },
+        {
+            "id": 10,
+            "name": "Eggs (Dozen)",
+            "price": 2.99,
+            "store": "Walmart",
+            "category": "Dairy",
+            "location": "Aisle 7"
+        },
+        {
+            "id": 11,
+            "name": "Eggs (Dozen)",
+            "price": 3.29,
+            "store": "Target",
+            "category": "Dairy",
+            "location": "Aisle 8"
+        },
+        {
+            "id": 12,
+            "name": "Eggs (Dozen)",
+            "price": 3.19,
+            "store": "Kroger",
+            "category": "Dairy",
+            "location": "Aisle 6"
+        },
+        {
+            "id": 13,
+            "name": "Bananas (1 lb)",
+            "price": 0.59,
+            "store": "Walmart",
+            "category": "Produce",
+            "location": "Aisle 1"
+        },
+        {
+            "id": 14,
+            "name": "Bananas (1 lb)",
+            "price": 0.69,
+            "store": "Target",
+            "category": "Produce",
+            "location": "Aisle 2"
+        },
+        {
+            "id": 15,
+            "name": "Bananas (1 lb)",
+            "price": 0.64,
+            "store": "Kroger",
+            "category": "Produce",
+            "location": "Aisle 1"
+        },
+        {
+            "id": 16,
+            "name": "Ground Coffee (12 oz)",
             "price": 5.99,
             "store": "Walmart",
-            "category": "Meat"
+            "category": "Beverages",
+            "location": "Aisle 5"
+        },
+        {
+            "id": 17,
+            "name": "Ground Coffee (12 oz)",
+            "price": 6.49,
+            "store": "Target",
+            "category": "Beverages",
+            "location": "Aisle 6"
+        },
+        {
+            "id": 18,
+            "name": "Ground Coffee (12 oz)",
+            "price": 6.29,
+            "store": "Kroger",
+            "category": "Beverages",
+            "location": "Aisle 5"
+        },
+        {
+            "id": 19,
+            "name": "Pasta (16 oz)",
+            "price": 1.29,
+            "store": "Walmart",
+            "category": "Pantry",
+            "location": "Aisle 4"
+        },
+        {
+            "id": 20,
+            "name": "Pasta (16 oz)",
+            "price": 1.49,
+            "store": "Target",
+            "category": "Pantry",
+            "location": "Aisle 5"
+        },
+        {
+            "id": 21,
+            "name": "Pasta (16 oz)",
+            "price": 1.39,
+            "store": "Kroger",
+            "category": "Pantry",
+            "location": "Aisle 4"
+        },
+        {
+            "id": 22,
+            "name": "Cereal (12 oz)",
+            "price": 3.49,
+            "store": "Walmart",
+            "category": "Breakfast",
+            "location": "Aisle 2"
+        },
+        {
+            "id": 23,
+            "name": "Cereal (12 oz)",
+            "price": 3.99,
+            "store": "Target",
+            "category": "Breakfast",
+            "location": "Aisle 3"
+        },
+        {
+            "id": 24,
+            "name": "Cereal (12 oz)",
+            "price": 3.79,
+            "store": "Kroger",
+            "category": "Breakfast",
+            "location": "Aisle 2"
         }
     ]
 } 

@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 # Main URLs for our app
 urlpatterns = [
+    path('admin/', admin.site.urls),
     # Main app URLs
     path('', include('grocery.urls')),
     
