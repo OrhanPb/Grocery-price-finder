@@ -198,6 +198,7 @@
         let searchQuery = '';
         let authToken = localStorage.getItem('authToken');
         let refreshToken = localStorage.getItem('refreshToken');
+        let favorites = new Set();  // Store favorite item IDs
 
         // Auth Functions
         function showLoginForm() {
@@ -300,6 +301,12 @@
         function updateAuthUI(isLoggedIn) {
             document.getElementById('authButtons').classList.toggle('d-none', isLoggedIn);
             document.getElementById('userMenu').classList.toggle('d-none', !isLoggedIn);
+            if (isLoggedIn) {
+                loadFavorites();
+            } else {
+                favorites.clear();
+                showItems();
+            }
         }
 
         // Get all items when page loads
@@ -326,6 +333,27 @@
                 alert('Could not load items. Please try again.');
             }
             hideLoading();
+        }
+
+        // Load favorites when user is logged in
+        async function loadFavorites() {
+            if (!authToken) return;
+            
+            try {
+                const response = await fetch('/api/favorites/', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                });
+                
+                if (response.ok) {
+                    const favoriteItems = await response.json();
+                    favorites = new Set(favoriteItems.map(item => item.id));
+                    showItems();  // Refresh display to show favorites
+                }
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+            }
         }
 
         // Show items on the page
@@ -370,7 +398,7 @@
                             <p class="mb-1">Category: ${item.category}</p>
                             <p class="mb-0">Location: ${item.location}</p>
                         </div>
-                        <i class="fas fa-heart favorite-btn" onclick="toggleFavorite(${item.id})"></i>
+                        <i class="fas fa-heart favorite-btn${favorites.has(item.id) ? ' active' : ''}" onclick="toggleFavorite(${item.id}, event)"></i>
                     </div>
                 `;
                 itemsList.appendChild(card);
@@ -411,7 +439,7 @@
         }
 
         // Toggle favorite
-        async function toggleFavorite(itemId) {
+        async function toggleFavorite(itemId, event) {
             if (!authToken) {
                 alert('Please login to add items to favorites');
                 return;
@@ -426,8 +454,15 @@
                 });
 
                 if (response.ok) {
+                    const data = await response.json();
                     const btn = event.target;
-                    btn.classList.toggle('active');
+                    if (data.status === 'added') {
+                        btn.classList.add('active');
+                        favorites.add(itemId);
+                    } else {
+                        btn.classList.remove('active');
+                        favorites.delete(itemId);
+                    }
                 } else {
                     alert('Failed to update favorite status');
                 }

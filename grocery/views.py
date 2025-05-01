@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Favorite
 import json
 import os
 
@@ -97,17 +98,41 @@ def login_user(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_favorites(request):
-    # In a real app, this would fetch from a database
-    # For now, we'll just return a subset of products
-    products = load_products()[:3]  # Return first 3 items as favorites
-    return Response(products)
+    # Get user's favorite item IDs
+    favorite_ids = Favorite.objects.filter(user=request.user).values_list('item_id', flat=True)
+    
+    # Get all products
+    products = load_products()
+    
+    # Filter products to only include favorites
+    favorite_products = [p for p in products if p['id'] in favorite_ids]
+    
+    return Response(favorite_products)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_favorite(request, item_id):
-    # In a real app, this would update the database
-    # For now, we'll just return success
-    return Response({'status': 'success'})
+    try:
+        # Check if item exists
+        products = load_products()
+        item_exists = any(p['id'] == item_id for p in products)
+        if not item_exists:
+            return Response({'error': 'Item not found'}, status=404)
+        
+        # Try to get existing favorite
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user,
+            item_id=item_id
+        )
+        
+        if not created:
+            # If favorite already existed, remove it
+            favorite.delete()
+            return Response({'status': 'removed'})
+            
+        return Response({'status': 'added'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 class HomeView(TemplateView):
     # Show the main page
